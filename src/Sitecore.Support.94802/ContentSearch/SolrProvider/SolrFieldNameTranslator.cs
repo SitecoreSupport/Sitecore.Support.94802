@@ -71,6 +71,16 @@ namespace Sitecore.Support.ContentSearch.SolrProvider
 
             if (aggressiveResolver)
             {
+                #region Sitecore.Support.94802
+                foreach (SolrSearchFieldConfiguration configuration in ((SolrFieldMap)this.fieldMap.GetValue(this)).GetAvailableTypes())
+                {
+                    string str = configuration.FieldNameFormat.Replace("{0}", string.Empty);
+                    if (fieldName.EndsWith(str, StringComparison.Ordinal))
+                    {
+                        return fieldName;
+                    }
+                }
+                #endregion
                 var res = FindTemplateField(strippedFieldName);                
 
                 if (res.Any())
@@ -79,8 +89,10 @@ namespace Sitecore.Support.ContentSearch.SolrProvider
 
                     if (configurationByFieldType != null)
                     {
+                        #region Sitecore.Support.94802
                         //Add to cache..
-                        ((SolrFieldMap)this.fieldMap.GetValue(this)).AddFieldByFieldName(strippedFieldName, configurationByFieldType);
+                        //((SolrFieldMap)this.fieldMap.GetValue(this)).AddFieldByFieldName(strippedFieldName, configurationByFieldType);
+                        #endregion
                         return configurationByFieldType.FormatFieldName(strippedFieldName, (SolrIndexSchema)this.schema.GetValue(this), cultureCode, null);
                     }
                 }
